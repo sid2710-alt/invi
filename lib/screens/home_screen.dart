@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
 import 'package:invi/blocs/navigator_bloc/navgation_state.dart';
 import 'package:invi/blocs/navigator_bloc/navigator_bloc.dart';
 import 'package:invi/blocs/navigator_bloc/navigator_event.dart';
@@ -10,8 +11,11 @@ import 'package:invi/screens/templates_screen.dart';// Import the BLoC
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => NavigationBloc(), // Provide the Navigation BLoC
+    return MultiBlocProvider(
+     providers: [
+      BlocProvider(create: (context)=> InvoiceBloc()),
+      BlocProvider(create: (context)=> NavigationBloc())
+     ], // Provide the Navigation BLoC
       child: Scaffold(
         appBar: AppBar(
           title: Text('Invoice Generator'),
@@ -58,7 +62,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   final List<Widget> _pages = [
-    InvoicesScreen(),
+    InvoiceScreen(),
     ClientsScreen(),
     TemplatesScreen(),
   ];
