@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
 import 'package:invi/blocs/invoices_bloc/invoices_state.dart';
 import 'package:invi/blocs/invoices_bloc/invoice_event.dart';
@@ -19,7 +20,7 @@ class InvoiceScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              // Navigate to Create Invoice screen
+              context.go('/add-invoice');
             },
           ),
         ],
@@ -46,19 +47,42 @@ class InvoiceScreen extends StatelessWidget {
               itemCount: invoices.length,
               itemBuilder: (context, index) {
                 final invoice = invoices[index];
-                return ListTile(
-                  title: Text(invoice.clientName),
-                  subtitle: Text("Amount: \$${invoice.amount}"),
-                  trailing: Text(
-                    "${invoice.date.day}/${invoice.date.month}/${invoice.date.year}",
+                return Card(
+                  child: ListTile(
+                    title: Text(invoice.clientName),
+                    subtitle: Text(
+                        "Amount: \$${invoice.totalAmount.toStringAsFixed(2)}"),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'send') {
+                          // Trigger send action
+                          print("Send Invoice: ${invoice.id}");
+                        } else if (value == 'download') {
+                          // Trigger download action
+                          print("Download Invoice: ${invoice.id}");
+                        } else if (value == 'delete') {
+                          // Trigger delete action
+                          context.read<InvoiceBloc>().add(
+                                DeleteInvoiceEvent(invoice.id),
+                              );
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => [
+                        PopupMenuItem(
+                          value: 'send',
+                          child: Text('Send Invoice'),
+                        ),
+                        PopupMenuItem(
+                          value: 'download',
+                          child: Text('Download as PDF'),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Delete Invoice'),
+                        ),
+                      ],
+                    ),
                   ),
-                  onTap: () {
-                    // Handle invoice tap, e.g., navigate to invoice detail screen
-                  },
-                  onLongPress: () {
-                    // Handle invoice long press, e.g., delete the invoice
-                    _showDeleteConfirmationDialog(context, invoice.id);
-                  },
                 );
               },
             );
@@ -72,7 +96,7 @@ class InvoiceScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.error, color: Colors.red, size: 50),
                   SizedBox(height: 10),
-                  Text(
+                  const Text(
                     'Failed to load invoices',
                     style: TextStyle(fontSize: 16, color: Colors.red),
                   ),
@@ -93,35 +117,6 @@ class InvoiceScreen extends StatelessWidget {
           return Center(child: Text("No invoices found"));
         },
       ),
-    );
-  }
-
-  // Helper function to show delete confirmation dialog
-  void _showDeleteConfirmationDialog(BuildContext context, String invoiceId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Delete Invoice"),
-          content: Text("Are you sure you want to delete this invoice?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () {
-                // Trigger delete invoice event in BLoC
-                context.read<InvoiceBloc>().add(DeleteInvoiceEvent(invoiceId));
-                Navigator.of(context).pop();
-              },
-              child: Text("Delete"),
-            ),
-          ],
-        );
-      },
     );
   }
 }
