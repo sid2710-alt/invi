@@ -20,7 +20,7 @@ class InvoiceScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              context.go('/add-invoice');
+              context.push('/add-invoice');
             },
           ),
         ],
