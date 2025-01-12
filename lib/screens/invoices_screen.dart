@@ -6,12 +6,24 @@ import 'package:invi/blocs/invoices_bloc/invoices_state.dart';
 import 'package:invi/blocs/invoices_bloc/invoice_event.dart';
 
 
-class InvoiceScreen extends StatelessWidget {
+class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
 
   @override
+  State<InvoiceScreen> createState() => _InvoiceScreenState();
+}
+
+class _InvoiceScreenState extends State<InvoiceScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<InvoiceBloc>().add(LoadInvoicesEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
-     context.read<InvoiceBloc>().add(LoadInvoicesEvent());
+     
 
     return Scaffold(
       appBar: AppBar(

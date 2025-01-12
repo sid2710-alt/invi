@@ -1,4 +1,4 @@
-import 'package:invi/models/Invoice.dart';
+import 'package:invi/models/invoice.dart';
 
 abstract class InvoiceState {
   final List<Invoice> invoices;

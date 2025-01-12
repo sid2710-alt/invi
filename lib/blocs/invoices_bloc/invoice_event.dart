@@ -1,4 +1,4 @@
-import 'package:invi/models/Invoice.dart';
+import 'package:invi/models/invoice.dart';
 
 abstract class InvoiceEvent {}
 
@@ -11,7 +11,7 @@ class CreateInvoiceEvent extends InvoiceEvent {
 }
 
 class DeleteInvoiceEvent extends InvoiceEvent {
-  final String invoiceId;
+  final int invoiceId;
 
   DeleteInvoiceEvent(this.invoiceId);
 }

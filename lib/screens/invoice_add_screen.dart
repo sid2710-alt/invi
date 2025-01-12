@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:invi/models/Invoice.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
+import 'package:invi/blocs/invoices_bloc/invoice_event.dart';
+import 'package:invi/models/invoice.dart';
 import 'package:invi/models/Item.dart';
 
 class AddInvoiceScreen extends StatefulWidget {
@@ -15,9 +18,12 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _dateController = TextEditingController();
   final TextEditingController _unitPriceController = TextEditingController();
+  final TextEditingController _itemDescriptionController = TextEditingController();
   DateTime? _selectedDate;
-  List<InvoiceItem> _items = [];
+
+  final List<InvoiceItem> _items = [];
 
   @override
   void dispose() {
@@ -26,6 +32,8 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
     _itemNameController.dispose();
     _quantityController.dispose();
     _unitPriceController.dispose();
+    _dateController.dispose();
+    _itemDescriptionController.dispose();
     super.dispose();
   }
 
@@ -39,6 +47,7 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
     if (pickedDate != null) {
       setState(() {
         _selectedDate = pickedDate;
+        _dateController.text = pickedDate.toString().split(" ")[0];
       });
     }
   }
@@ -50,15 +59,17 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
       final String itemName = _itemNameController.text;
       final int quantity = int.parse(_quantityController.text);
       final double unitPrice = double.parse(_unitPriceController.text);
+      final String itemDescription = _itemDescriptionController.text;
 
       setState(() {
-        _items.add(InvoiceItem(name: itemName, quantity: quantity, unitPrice: unitPrice));
+        _items.add(InvoiceItem(name: itemName, quantity: quantity, unitPrice: unitPrice, description: itemDescription));
       });
 
       // Clear item input fields
       _itemNameController.clear();
       _quantityController.clear();
       _unitPriceController.clear();
+      _itemDescriptionController.clear();
     }
   }
 
@@ -68,15 +79,12 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
       final DateTime date = _selectedDate ?? DateTime.now();
 
       final newInvoice = Invoice(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: DateTime.now().millisecondsSinceEpoch,
         clientName: clientName,
         date: date,
         items: _items,
       );
-
-      // Trigger the event or handle the invoice addition logic
-      print('Invoice Added: ${newInvoice.clientName}, Total: ${newInvoice.totalAmount}');
-
+      context.read<InvoiceBloc>().add(CreateInvoiceEvent(newInvoice));
       Navigator.pop(context); // Return to the previous screen
     }
   }
@@ -92,6 +100,7 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
         child: Form(
           key: _formKey,
           child: Column(
+            
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
@@ -105,20 +114,20 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
                 },
               ),
               SizedBox(height: 16),
-              Row(
-                children: [
-                  Text(
-                    _selectedDate == null
-                        ? 'No Date Selected'
-                        : 'Selected Date: ${_selectedDate!.toLocal()}'.split(' ')[0],
-                  ),
-                  Spacer(),
-                  TextButton(
-                    onPressed: _pickDate,
-                    child: Text('Select Date'),
-                  ),
-                ],
-              ),
+            
+                TextFormField(
+                controller: _dateController,
+                decoration: InputDecoration(labelText: 'Date'),
+                readOnly: true,
+                canRequestFocus: false,
+                onTap: _pickDate,),
+              
+              // IconButton(
+              //       onPressed: _pickDate,
+              //       icon: Icon(Icons.edit_calendar),
+              //     ) 
+              //],),
+              
               Divider(),
               Text(
                 'Add Items',
@@ -137,6 +146,12 @@ class AddInvoiceScreenState extends State<AddInvoiceScreen> {
                 controller: _unitPriceController,
                 decoration: InputDecoration(labelText: 'Unit Price'),
                 keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: _itemDescriptionController,
+                decoration: InputDecoration(labelText: 'Item Description'),
+                keyboardType: TextInputType.text,
+                maxLines: 3,
               ),
               SizedBox(height: 8),
               ElevatedButton(

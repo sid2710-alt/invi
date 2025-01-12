@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
+import 'package:invi/blocs/navigator_bloc/navigator_bloc.dart';
 import 'package:invi/screens/home_screen.dart';
 import 'package:invi/screens/invoice_add_screen.dart';
 
@@ -29,9 +32,14 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MultiBlocProvider(
+     providers: [
+      BlocProvider(create: (context)=> InvoiceBloc()),
+      BlocProvider(create: (context)=> NavigationBloc())
+     ],
+     child: MaterialApp.router(
       title: 'Invoice Generator',
       routerConfig: _router, // Pass the GoRouter configuration
-    );
+    ));
   }
 }
