@@ -10,6 +10,12 @@ class CreateInvoiceEvent extends InvoiceEvent {
   CreateInvoiceEvent(this.invoice);
 }
 
+class UpdateInvoiceEvent extends InvoiceEvent {
+  final Invoice invoice;
+
+  UpdateInvoiceEvent(this.invoice);
+}
+
 class DeleteInvoiceEvent extends InvoiceEvent {
   final int invoiceId;
 

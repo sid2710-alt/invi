@@ -77,18 +77,24 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                           context.read<InvoiceBloc>().add(
                                 DeleteInvoiceEvent(invoice.id),
                               );
+                        } else if (value == 'update') {
+                          context.push('/add-invoice', extra: invoice);
                         }
                       },
                       itemBuilder: (BuildContext context) => [
-                        PopupMenuItem(
+                        const PopupMenuItem(
+                          value: 'update',
+                          child: Text('Update Invoice'),
+                        ),
+                        const PopupMenuItem(
                           value: 'send',
                           child: Text('Send Invoice'),
                         ),
-                        PopupMenuItem(
+                        const PopupMenuItem(
                           value: 'download',
                           child: Text('Download as PDF'),
                         ),
-                        PopupMenuItem(
+                        const PopupMenuItem(
                           value: 'delete',
                           child: Text('Delete Invoice'),
                         ),

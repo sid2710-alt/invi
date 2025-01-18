@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
 import 'package:invi/blocs/navigator_bloc/navigator_bloc.dart';
+import 'package:invi/models/invoice.dart';
 import 'package:invi/screens/home_screen.dart';
-import 'package:invi/screens/invoice_add_screen.dart';
+import 'package:invi/screens/invoice_upsert_screen.dart';
 
 class AppShell extends StatelessWidget {
   // Define the GoRouter
@@ -22,7 +23,15 @@ class AppShell extends StatelessWidget {
       GoRoute(
         path: '/add-invoice',
         builder: (context, state) {
-          return const AddInvoiceScreen(); // Add invoice screen widget
+          Invoice? existingInvoice;
+          if(state.extra is Map) {
+            existingInvoice= Invoice.fromJson(state.extra as Map<String, dynamic>);
+          } else if (state.extra is Invoice){
+            existingInvoice= state.extra as Invoice;
+          }
+          return UpsertInvoiceScreen(
+            existingInvoice: existingInvoice
+          ); // Add invoice screen widget
         },
       ),
     ],
