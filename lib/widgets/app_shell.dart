@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
+import 'package:invi/blocs/login_bloc/login_bloc.dart';
 import 'package:invi/blocs/navigator_bloc/navigator_bloc.dart';
 import 'package:invi/models/invoice.dart';
 import 'package:invi/screens/home_screen.dart';
 import 'package:invi/screens/invoice_upsert_screen.dart';
+import 'package:invi/screens/login_screen.dart';
 
 class AppShell extends StatelessWidget {
+
+
   // Define the GoRouter
   final GoRouter _router = GoRouter(
-    initialLocation: '/home', // Set the initial route
+    redirect: (context, state) {
+      if(state.uri.path == '/'){
+        return '/login';
+      } else {
+        return null;
+      }
+    },
+    initialLocation: '/', // Set the initial route
     routes: [
       // Home route
       GoRoute(
@@ -19,6 +30,9 @@ class AppShell extends StatelessWidget {
           return HomeScreen(); // Your home screen widget
         },
       ),
+      GoRoute(path: '/login', builder:(context, state){
+        return LoginScreen();
+      } ),
       // Add Invoice route
       GoRoute(
         path: '/add-invoice',
@@ -43,6 +57,7 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
      providers: [
+      BlocProvider(create: (context)=> LoginBloc()),
       BlocProvider(create: (context)=> InvoiceBloc()),
       BlocProvider(create: (context)=> NavigationBloc())
      ],

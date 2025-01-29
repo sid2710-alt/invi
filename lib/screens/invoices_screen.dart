@@ -5,7 +5,6 @@ import 'package:invi/blocs/invoices_bloc/InvoiceBloc.dart';
 import 'package:invi/blocs/invoices_bloc/invoices_state.dart';
 import 'package:invi/blocs/invoices_bloc/invoice_event.dart';
 
-
 class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
 
@@ -14,7 +13,6 @@ class InvoiceScreen extends StatefulWidget {
 }
 
 class _InvoiceScreenState extends State<InvoiceScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -23,8 +21,6 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-     
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Invoices"),

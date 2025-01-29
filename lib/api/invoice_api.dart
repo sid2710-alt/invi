@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:invi/models/invoice.dart';
+import 'package:invi/utils/secure_storage.dart';
 
 class InvoiceApi {
   static const String apiUrl =
       'http://localhost:8081/api/invoices'; // Your actual API URL
+  static const String loginUrl = 'http://localhost:8081/auth';
 
   static Future<int> saveInvoice(Invoice invoice) async {
     try {
@@ -67,6 +69,37 @@ class InvoiceApi {
       return int.parse(invoiceId);
     } else {
       throw Exception('Failed to Update invoice');
+    }
+  }
+
+  static Future<String> login(String username, String password) async {
+    final http.Response response = await http.post(
+      Uri.parse('$loginUrl/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      final String token = response.body;
+      await SecureStorage.instance.storeToken(token);
+      return token;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  static Future<String> register(String username, String password) async {
+    final http.Response response = await http.post( 
+      Uri.parse('$loginUrl/signup'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      final String token = response.body;
+      return token;
+    } else {
+      throw Exception(response.body);
     }
   }
 }
