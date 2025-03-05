@@ -17,7 +17,7 @@ The Invoice Generator App is a mobile application built using Flutter. It allows
 - **BLoC** for state management
 - **GoRouter** for navigation
 
-### Backend (Planned):
+### [Backend](https://github.com/sid2710-alt/invoice_services)(In Progress):
 - **Java Spring Boot**
 - **SQL Database**
 - **Microservices Architecture** (future expansion)
